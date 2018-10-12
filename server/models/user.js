@@ -21,6 +21,11 @@ const userSchema = mongoose.Schema({
         required: true,
         maxlenght: 100
     },
+    lastname:{
+        type: String,
+        required: true,
+        maxlenght: 100
+    },
     cart:{
         type: Array,
         default: []
@@ -71,6 +76,17 @@ userSchema.methods.generateToken = function(cb){
     user.save(function(err,user){
         if(err) return cb(err);
         cb(null,user);
+    })
+}
+
+userSchema.statics.findByToken = function(token,cb){
+    var user = this;
+
+    jwt.verify(token,process.env.SECRET,function(err,decode){
+        user.findOne({"_id":decode,"token":token},function(err,user){
+            if(err) return cb(err);
+            cb(null,user);  
+        })
     })
 }
 
