@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const woodSchema = mongoose.Schema({
+const seccionSchema = mongoose.Schema({
     name:{
         required: true,
         type: String,
@@ -9,6 +9,6 @@ const woodSchema = mongoose.Schema({
     }
 });
 
-const Wood = mongoose.model('Wood', woodSchema);
+const Seccion = mongoose.model('Seccion',seccionSchema);
 
-module.exports = { Wood }
+module.exports = { Seccion }

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const brandSchema = mongoose.Schema({
+const tagSchema = mongoose.Schema({
     name:{
         required: true,
         type: String,
@@ -9,6 +9,6 @@ const brandSchema = mongoose.Schema({
     }
 });
 
-const Brand = mongoose.model('Brand',brandSchema);
+const Tag = mongoose.model('Tag', tagSchema);
 
-module.exports = { Brand }
+module.exports = { Tag }

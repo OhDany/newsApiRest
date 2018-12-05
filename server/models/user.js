@@ -26,10 +26,6 @@ const userSchema = mongoose.Schema({
         required: true,
         maxlenght: 100
     },
-    cart:{
-        type: Array,
-        default: []
-    },
     history:{
         type: Array,
         default: []

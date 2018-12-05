@@ -15,16 +15,17 @@ app.use(cookieParser());
 
 // Models
 const { User } = require('./models/user');
-const { Brand } = require('./models/brand');
-const { Wood } = require('./models/wood');
-const { Product } = require('./models/product');
+const { Seccion } = require('./models/seccion');
+const { Tag } = require('./models/tag');
+const { Comment } = require('./models/comment');
+const { News } = require('./models/news');
 
 // Middlewares
 const { auth } = require('./middleware/auth');
 const { admin } = require('./middleware/admin');
 
 //<><><><><><><><><><><><>
-//         Products
+//         News
 //<><><><><><><><><><><><>
 
 // BY ARRIVAL
@@ -33,15 +34,15 @@ const { admin } = require('./middleware/admin');
 // BY SELL
 // /articles?sortBy=sold&order=desc&limit=100&skip=5
 
-app.get('/api/product/articles',(req,res)=>{
+app.get('/api/news/articles',(req,res)=>{
     let order = req.query.order ? req.query.order : 'asc';
     let sortBy = req.query.sortBy ? req.query.sortBy : "_id";
     let limit = req.query.limit ? parseInt(req.query.limit) : 100;
 
-    Product.
+    News.
     find().
-    populate('brand').
-    populate('wood').
+    populate('seccion').
+    populate('tag').
     sort([[sortBy,order]]).
     limit(limit).
     exec((err,articles)=>{
@@ -50,7 +51,7 @@ app.get('/api/product/articles',(req,res)=>{
     })
 })
 
-app.get('/api/product/articles_by_id',(req,res)=>{
+app.get('/api/news/articles_by_id',(req,res)=>{
     let type = req.query.type;
     let items = req.query.id;
 
@@ -62,19 +63,19 @@ app.get('/api/product/articles_by_id',(req,res)=>{
         })
     }
 
-    Product.
+    News.
     find({'_id':{$in:items}}).
-    populate('brand').
-    populate('wood').
+    populate('seccion').
+    populate('tag').
     exec((err,docs)=>{
         return res.status(200).send(docs)
     })
 });
 
-app.post('/api/product/article',auth,admin,(req,res)=>{
-    const product = new Product(req.body);
+app.post('/api/news/article',auth,admin,(req,res)=>{
+    const news = new News(req.body);
 
-    product.save((err,doc)=>{
+    news.save((err,doc)=>{
         if(err) return res.json({success:false,err});
         res.status(200).json({
             success: true,
@@ -84,48 +85,71 @@ app.post('/api/product/article',auth,admin,(req,res)=>{
 })
 
 //<><><><><><><><><><><><>
-//         Woods
+//        Comments
 //<><><><><><><><><><><><>
 
-app.post('/api/product/wood',auth,admin,(req,res)=>{
-    const wood = new Wood (req.body);
+app.post('/api/news/comment',auth,admin,(req,res)=>{
+    const comment = new Comment (req.body);
     
-    wood.save((err,doc)=>{
+    comment.save((err,doc)=>{
         if(err) return res.json({success:false,err});
         res.status(200).json({
             success: true,
-            wood: doc
+            comment: doc
         })
     }) 
 });
 
-app.get('/api/product/woods',(req,res)=>{
-    Wood.find({},(err,woods)=>{
+app.get('/api/news/comments',(req,res)=>{
+    Comment.find({},(err,comments)=>{
         if(err) return res.status(400).send(err);
-        res.status(200).send(woods)
+        res.status(200).send(comments)
     })
 });
 
 //<><><><><><><><><><><><>
-//         Brand
+//         Tag
 //<><><><><><><><><><><><>
 
-app.post('/api/product/brand',auth,admin,(req,res)=>{
-    const brand = new Brand(req.body);
-
-    brand.save((err,doc)=>{
+app.post('/api/news/tag',auth,admin,(req,res)=>{
+    const tag = new Tag (req.body);
+    
+    tag.save((err,doc)=>{
         if(err) return res.json({success:false,err});
         res.status(200).json({
             success: true,
-            brand: doc
+            tag: doc
+        })
+    }) 
+});
+
+app.get('/api/news/tags',(req,res)=>{
+    Tag.find({},(err,tags)=>{
+        if(err) return res.status(400).send(err);
+        res.status(200).send(tags)
+    })
+});
+
+//<><><><><><><><><><><><>
+//         Seccion
+//<><><><><><><><><><><><>
+
+app.post('/api/news/seccion',auth,admin,(req,res)=>{
+    const seccion = new Seccion(req.body);
+
+    seccion.save((err,doc)=>{
+        if(err) return res.json({success:false,err});
+        res.status(200).json({
+            success: true,
+            seccion: doc
         })
     })
 })
 
-app.get('/api/product/brands',(req,res)=>{
-    Brand.find({},(err,brands)=>{
+app.get('/api/news/seccions',(req,res)=>{
+    Seccion.find({},(err,seccions)=>{
         if(err) return res.status(400).send(err);
-        res.status(200).send(brands)
+        res.status(200).send(seccions)
     })
 })
 
@@ -141,7 +165,6 @@ app.get('/api/users/auth',auth,(req,res)=>{
         name: req.user.name,
         lastname: req.user.lastname,
         role: req.user.role,
-        cart: req.user.cart,
         history: req.user.history
     })
 })
